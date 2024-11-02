@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+        <title>The Number Dice</title>
+        <link rel="stylesheet" href="styles.css">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        </style>
+        <script src="https://kit.fontawesome.com/a7bcc6d61a.js" crossorigin="anonymous"></script>
+        <script src="script.js"></script>
+    </head>
+<body>
+<div id="header">
+    <div class="container">
+        <nav>
+            <ul>
+                <li><button class="mode" id="modechange" onclick="mode()"><i class="fa-solid fa-moon"></i></button></li>
+                <li><a href="#instructions" id="mob_ins">Instructions</a></li>
+            </ul>
+            <ul>
+                <li id="past_bets"></li>
+                <li id="balance"></li>
+            </ul>
+        </nav>
+        <div class="dices">
+            <div class="row1">
+                <button id="d1" class="dice">1</button>
+                <button id="d2" class="dice">2</button>
+                <button id="d3" class="dice">3</button>
+            </div>
+            <div class="row2">
+                <button id="d4" class="dice">4</button>
+                <button id="d5" class="dice">5</button>
+                <button id="d6" class="dice">6</button>
+        </div>
+        <center><p id="roll_result"></p></center>
+        <div class="inputs">
+            <input type="number" id="guess" max="6" min="1" placeholder="guess">
+            <input type="number" id="bet" placeholder="bet">
+        </div>
+        <div class="roll">
+            <button type="button" id="roll">Roll</button>
+        </div>
+    </div>
+</div>
+
+<!--------------------------------INSTRUCTIONS------------------------------------>
+
+<div id="instructions">
+    <div class="container">
+        <h1>Instructions</h1>
+        <div>
+            <h2>How to Play The Number Dice Betting Game</h2><br>
+            <h3>Objective</h3><br>
+            <p>The goal of the Dice Betting Game is to correctly predict 
+                how many times your chosen number will appear on six rolled dice.</p><br>
+            <h3>Getting Started</h3><br>
+            <h3>1.Place Your Bet:</h3><br>
+            <p>Enter the amount of coins you want to bet in the "bet" field.<br>
+            Choose a number between 1 and 6 that you want to bet on in the "guess" field.</p><br>
+            <h3>2.Roll the Dice:</h3><br>
+            <p>Click the "Roll Dice" button to roll the six dice.<br>
+                The dice will be animated as they roll for added excitement.
+            </p><br>
+            <h3>Scoring</h3><br>
+            <p>After the dice stop rolling, the game will display the results:<br>
+                If your chosen number appears on at least two dice, you win!</p><br>
+            <h3>Payouts</h3><br>
+            <p>
+                If your number appears on 2 dice: Win 2x your bet amount.<br>
+                If your number appears on 3 dice: Win 3x your bet amount.<br>
+                If your number appears on 4 dice: Win 4x your bet amount.<br>
+                If your number appears on 5 dice: Win 5x your bet amount.<br>
+                If your number appears on 6 dice: Win 6x your bet amount.<br>
+                If your number does not appear or only appear on one dice, you lose your bet amount.<br>
+            </p><br>
+            <h3>Balance and History</h3><br>
+            <p>Your current balance is displayed at the top right corner of the screen.<br>
+            The game keeps a history of your last 10 betting outcomes, showing whether you won or lost.
+            </p><br>
+            <h3>Winning and Losing</h3><br>
+            <p>If your balance reaches 2000 coins, you win the game!<br>
+            If your balance drops to 0 coins, the game is over, and you can no longer place bets.
+            Just refresh the page to start again.
+            </p><br>
+            <h3>Dark Mode</h3><br>
+            <p>You can toggle between light and dark modes by clicking the dark mode button at the top left corner 
+                for a better visual experience.</p><br>
+            <h3>Tips</h3><br>
+            <p>Manage your bets wisely to maximize your chances of winning.<br>
+            Enjoy the game and have fun!</p>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>© copyright -2024 Sivadatta.</p>
+        <a href='https://www.free-counters.org/'>powered by Free-Counters</a> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=d44879074e093754b5b306720075e26ec4a210b6'></script>
+        <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1256184/t/5"></script>
+    </div>
+</div>
+
+
+
+<!--------------------------------SCRIPT------------------------------------------->
+
+<script>
+    var balance=1000;
+    document.getElementById("balance").textContent="Balance : "+balance+" coins";
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min; // The maximum is inclusive and the minimum is inclusive
+    }
+    const history=[];
+
+    function diceGame(){
+
+        if (history.length>10){
+            history.shift();
+        }
+        //var d=1;
+        var guess=document.getElementById("guess").value;
+        var bet=document.getElementById("bet").value;
+        document.getElementById("balance").textContent="Balance : "+balance+" coins";
+        if(balance==0||balance>=2000){
+            alert("Refresh the page to play again.");
+        }
+        else if (6<guess||guess<1){
+            document.getElementById("roll_result").textContent="Guess a valid number";
+        }
+        else if(bet>balance||bet<1){
+            document.getElementById("roll_result").textContent="Place valid bet";
+        }
+        else{
+            var count=0;
+            for (let d=1;d<7;d++){
+                const dice = document.getElementById("d"+d);
+
+                // Start circular rotation animation
+                dice.classList.add("rolling");
+
+                // Stop the animation and show the final dice number after 1 second
+                setTimeout(() => {
+                    dice.classList.remove("rolling");
+                }, 1000); // Duration matches the animation time
+            }
+            setTimeout(() => {//DELAY roll result along with animation
+            for (let d=1;d<7;d++){
+                var num=document.getElementById("d"+d).innerHTML= getRandomInt(1,6);
+                if (guess==num){
+                    count=count+1;
+                }
+            }
+
+            if (count<=1){
+                won_amount=0;
+                document.getElementById("roll_result").textContent="You lost : "+bet+" coins";
+                balance=balance-bet;
+                document.getElementById("balance").textContent="Balance : "+balance+" coins";
+                history.push("-"+bet);
+                document.getElementById("past_bets").textContent=history+" : History";
+                if (balance==0){
+                    document.getElementById("roll_result").textContent="Game over! You lost all your coins.";
+                    //document.querySelector("#roll").disabled = true;
+                }
+            }
+            else{
+                var won_amount=(count)*bet;
+                document.getElementById("roll_result").textContent="You won : "+(won_amount)+" coins";
+                balance=balance+won_amount;
+                document.getElementById("balance").textContent="Balance : "+balance+" coins";
+                history.push("+"+won_amount);
+                document.getElementById("past_bets").textContent=history+" : History";
+                if (balance>=2000){
+                    document.getElementById("roll_result").textContent="Congratulations! You won the game.";
+                    //document.querySelector("#roll").disabled = true;
+                }
+            }
+            },1000);//DELAY roll result along with animation
+        }
+    }
+    const button=document.getElementById("roll");
+    button.addEventListener('click',diceGame);
+</script>
+
+<!------------DARK MODE--------->
+
+<script>
+const currentMode = localStorage.getItem('theme');
+if (currentMode == 'dark'){
+    document.body.classList.add('dark-mode');
+    document.getElementById("modechange").innerHTML='<i class="fa-solid fa-sun"></i>';
+}
+if (theme=="dark"){
+    document.getElementById("modechange").innerHTML='<i class="fa-solid fa-sun"></i>';
+}
+else{
+    document.getElementById("modechange").innerHTML='<i class="fa-solid fa-moon"></i>';
+}
+function mode(){
+    document.body.style.transition = "0.4s";
+    document.body.classList.toggle("dark-mode");
+    const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+    localStorage.setItem('theme', theme);
+    if (theme=="dark"){
+        document.getElementById("modechange").innerHTML='<i class="fa-solid fa-sun"></i>';
+    }
+    else{
+        document.getElementById("modechange").innerHTML='<i class="fa-solid fa-moon"></i>';
+    }
+}
+</script>
+</body>
+</html>
